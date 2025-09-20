@@ -60,3 +60,34 @@ nombre_referencia VARCHAR(100) NOT NULL,
 telefono VARCHAR(20) NOT NULL,
 FOREIGN KEY (id_cliente) REFERENCES Clientes(id_cliente)
 );
+
+ALTER TABLE Clientes
+ADD CONSTRAINT UQ_Clientes_numero_documento UNIQUE (numero_documento);
+
+INSERT INTO Clientes (id_cliente, nombre, apellido, numero_documento)
+VALUES
+(1, 'Juan', 'Pérez', '1001'),
+(2, 'María', 'López', '1002'),
+(3, 'Carlos', 'Ramírez', '1003'),
+(4, 'Ana', 'González', '1004'),
+(5, 'Pedro', 'Martínez', '1005'),
+(6, 'Laura', 'Hernández', '1006'),
+(7, 'José', 'Santos', '1007'),
+(8, 'Elena', 'Castillo', '1008'),
+(9, 'Miguel', 'Torres', '1009'),
+(10, 'Sofía', 'Díaz', '1010');
+
+UPDATE Clientes
+SET apellido = 'Rodríguez'
+WHERE id_cliente = 1;
+
+SELECT 
+    c.id_cliente,
+    c.nombre + ' ' + c.apellido AS cliente,
+    l.titulo AS libro,
+    comp.fecha_compra
+FROM Clientes c
+INNER JOIN Compras comp 
+    ON c.id_cliente = comp.id_cliente
+INNER JOIN Libros l 
+    ON comp.id_libro = l.id_libro;
