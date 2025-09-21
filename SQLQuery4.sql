@@ -123,3 +123,75 @@ ADD metodo_pago VARCHAR(20) DEFAULT 'Efectivo'
 SELECT c.nombre, c.apellido, p.fecha_prestamo, p.fecha_devolucion
 FROM Clientes c
 INNER JOIN Prestamos p ON c.id_cliente = p.id_cliente;
+ --===============CAMBIOS JOSUE=========---
+ ---=====LIBROS=====---
+--==== Ajustar tabla Categoria====---
+ALTER TABLE Categoria
+DROP COLUMN id_categoria;
+
+ALTER TABLE Categoria
+ADD id_categoria INT IDENTITY(1,1) PRIMARY KEY;
+
+--=== Ajustar tabla Libros====---
+ALTER TABLE Libros
+DROP COLUMN id_libro;
+
+ALTER TABLE Libros
+ADD id_libro INT IDENTITY(1,1) PRIMARY KEY,
+    precio INT NOT NULL CHECK (precio > 0),
+    cantidad INT,
+    estado_libro VARCHAR(30);
+
+--===== Insertar categor as===---
+INSERT INTO Categoria (nombre_categoria)
+VALUES
+('Fantas a'),
+('Programaci n'),
+('Historia'),
+('Terror'),
+('Ciencia ficci n'),
+('Psicolog a'),
+('Romance'),
+('Aventura'),
+('Misterio/Suspenso'),
+('Comedia'),
+('Novela hist rica'),
+('Ficci n er tica'),
+('Distop a'),
+('Drama');
+
+INSERT INTO Libros (titulo, autor, precio, cantidad, estado_libro, id_categoria)
+VALUES
+('El Se or de los Anillos', 'J.R.R. Tolkien', 80000, 5, 'Nuevo', 1),
+('Harry Potter y el Prisionero de Azkaban', 'J.K. Rowling', 50000, 7, 'Nuevo', 1),
+('Clean Code', 'Robert C. Martin', 90000, 10, 'Nuevo', 2),
+('Eloquent JavaScript', 'Marijn Haverbeke', 60000, 8, 'Usado', 2),
+('Historia de Roma', 'Mary Beard', 70000, 3, 'Nuevo', 3),
+('La Segunda Guerra Mundial', 'Antony Beevor', 95000, 4, 'Usado', 3),
+('It', 'Stephen King', 65000, 6, 'Nuevo', 4),
+('El Resplandor', 'Stephen King', 60000, 5, 'Usado', 4),
+('Dune', 'Frank Herbert', 85000, 6, 'Nuevo', 5),
+('Fundaci n', 'Isaac Asimov', 78000, 5, 'Nuevo', 5),
+('El hombre en busca de sentido', 'Viktor Frankl', 55000, 10, 'Nuevo', 6),
+('Pensar r pido, pensar despacio', 'Daniel Kahneman', 68000, 4, 'Usado', 6),
+('Orgullo y Prejuicio', 'Jane Austen', 50000, 7, 'Nuevo', 7),
+('Bajo la misma estrella', 'John Green', 45000, 6, 'Nuevo', 7),
+('La Isla del Tesoro', 'Robert Louis Stevenson', 52000, 5, 'Nuevo', 8),
+('Viaje al centro de la Tierra', 'Julio Verne', 56000, 4, 'Usado', 8),
+('El C digo Da Vinci', 'Dan Brown', 60000, 10, 'Nuevo', 9),
+('Sherlock Holmes: Estudio en Escarlata', 'Arthur Conan Doyle', 48000, 6, 'Nuevo', 9),
+('Sin noticias de Gurb', 'Eduardo Mendoza', 40000, 8, 'Nuevo', 10),
+('Good Omens', 'Neil Gaiman y Terry Pratchett', 65000, 5, 'Nuevo', 10),
+('Los Pilares de la Tierra', 'Ken Follett', 78000, 6, 'Nuevo', 11),
+('La Catedral del Mar', 'Ildefonso Falcones', 72000, 4, 'Usado', 11),
+('50 Sombras de Grey', 'E.L. James', 50000, 8, 'Nuevo', 12),
+('Delta de Venus', 'Ana s Nin', 62000, 3, 'Usado', 12),
+('1984', 'George Orwell', 55000, 12, 'Nuevo', 13),
+('Un Mundo Feliz', 'Aldous Huxley', 53000, 10, 'Nuevo', 13),
+('Cien a os de soledad', 'Gabriel Garc a M rquez', 85000, 6, 'Nuevo', 14),
+('La Casa de los Esp ritus', 'Isabel Allende', 70000, 4, 'Usado', 14);
+
+SELECT L.titulo, L.autor, L.precio, L.estado_libro, C.nombre_categoria
+FROM Libros L
+INNER JOIN Categoria C
+    ON L.id_categoria = C.id_categoria;
