@@ -3,19 +3,17 @@ CREATE DATABASE AlquimiaLiteraria;
 USE AlquimiaLiteraria;
 
 CREATE TABLE Tipo_Identidad (
-    id_tipo_identidad INT PRIMARY KEY,
+    id_tipo_identidad INT IDENTITY(1,1) PRIMARY KEY,
     nombre_tipo VARCHAR(50) NOT NULL
 );
 
-
 CREATE TABLE Categoria (
-    id_categoria INT PRIMARY KEY,
+    id_categoria INT IDENTITY(1,1) PRIMARY KEY,
     nombre_categoria VARCHAR(100) NOT NULL
 );
 
-
 CREATE TABLE Clientes (
-    id_cliente INT PRIMARY KEY,
+    id_cliente INT IDENTITY(1,1) PRIMARY KEY,
     nombre VARCHAR(100) NOT NULL,
     apellido VARCHAR(100) NOT NULL,
     id_tipo_identidad INT NOT NULL,
@@ -23,18 +21,16 @@ CREATE TABLE Clientes (
     FOREIGN KEY (id_tipo_identidad) REFERENCES Tipo_Identidad(id_tipo_identidad)
 );
 
-
 CREATE TABLE Libros (
-    id_libro INT PRIMARY KEY,
+    id_libro INT IDENTITY(1,1) PRIMARY KEY,
     titulo VARCHAR(200) NOT NULL,
     autor VARCHAR(100) NOT NULL,
     id_categoria INT NOT NULL,
     FOREIGN KEY (id_categoria) REFERENCES Categoria(id_categoria)
 );
 
-
 CREATE TABLE Compras (
-    id_compra INT PRIMARY KEY,
+    id_compra INT IDENTITY(1,1) PRIMARY KEY,
     id_cliente INT NOT NULL,
     id_libro INT NOT NULL,
     fecha_compra DATE NOT NULL,
@@ -42,45 +38,36 @@ CREATE TABLE Compras (
     FOREIGN KEY (id_libro) REFERENCES Libros(id_libro)
 );
 
-
 CREATE TABLE Prestamos (
-id_prestamos INT PRIMARY KEY,
-id_cliente INT NOT NULL,
-id_libro INT NOT NULL,
-fecha_prestamo DATE NOT NULL,
-fecha_devolucion DATE NOT NULL,
-FOREIGN KEY (id_cliente) REFERENCES Clientes(id_cliente),
-FOREIGN KEY (id_libro) REFERENCES Libros(id_libro)
+    id_prestamos INT IDENTITY(1,1) PRIMARY KEY,
+    id_cliente INT NOT NULL,
+    id_libro INT NOT NULL,
+    fecha_prestamo DATE NOT NULL,
+    fecha_devolucion DATE NOT NULL,
+    FOREIGN KEY (id_cliente) REFERENCES Clientes(id_cliente),
+    FOREIGN KEY (id_libro) REFERENCES Libros(id_libro)
 );
 
 CREATE TABLE Referencias_Personales (
-id_referencias INT PRIMARY KEY,
-id_cliente INT NOT NULL,
-nombre_referencia VARCHAR(100) NOT NULL,
-telefono VARCHAR(20) NOT NULL,
-FOREIGN KEY (id_cliente) REFERENCES Clientes(id_cliente)
+    id_referencias INT IDENTITY(1,1) PRIMARY KEY,
+    id_cliente INT NOT NULL,
+    nombre_referencia VARCHAR(100) NOT NULL,
+    telefono VARCHAR(20) NOT NULL,
+    FOREIGN KEY (id_cliente) REFERENCES Clientes(id_cliente)
 );
+
 
 --===============CAMBIOS JOSUE=========---
  ---=====LIBROS=====---
---==== Ajustar tabla Categoria====---
-ALTER TABLE Categoria
-DROP COLUMN id_categoria;
-
-ALTER TABLE Categoria
-ADD id_categoria INT IDENTITY(1,1) PRIMARY KEY;
 
 --=== Ajustar tabla Libros====---
-ALTER TABLE Libros
-DROP COLUMN id_libro;
 
 ALTER TABLE Libros
-ADD id_libro INT IDENTITY(1,1) PRIMARY KEY,
-    precio INT NOT NULL CHECK (precio > 0),
+ADD precio INT NOT NULL CHECK (precio > 0),
     cantidad INT,
     estado_libro VARCHAR(30);
 
---===== Insertar categor as===---
+--===== Insertar categorias===---
 INSERT INTO Categoria (nombre_categoria)
 VALUES
 ('Fantas a'),
