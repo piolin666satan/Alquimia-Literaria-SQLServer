@@ -2,7 +2,7 @@
 
 -- CONSULTAS DE RECUPERACIÓN DE DATOS Y COLUMNAS CALCULADAS
 
--- 1️⃣ Recuperar todos los libros con su categoría
+-- Recuperar todos los libros con su categoría
 SELECT 
     L.titulo AS Título,
     L.autor AS Autor,
@@ -11,7 +11,7 @@ SELECT
 FROM Libros L
 JOIN Categoria C ON L.id_categoria = C.id_categoria;
 
--- 2️⃣ Mostrar las compras con nombre completo del cliente y el total pagado (columna calculada)
+-- Mostrar las compras con nombre completo del cliente y el total pagado (columna calculada)
 SELECT 
     CO.id_compra AS ID_Compra,
     CL.nombre + ' ' + CL.apellido AS Cliente,
@@ -23,7 +23,7 @@ FROM Compras CO
 JOIN Clientes CL ON CO.id_cliente = CL.id_cliente
 JOIN Libros L ON CO.id_libro = L.id_libro;
 
--- 3️⃣ Mostrar préstamos con días transcurridos (columna calculada)
+-- Mostrar préstamos con días transcurridos (columna calculada)
 SELECT 
     P.id_prestamos AS ID_Prestamo,
     CL.nombre + ' ' + CL.apellido AS Cliente,
