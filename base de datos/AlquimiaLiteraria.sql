@@ -2,6 +2,7 @@ CREATE DATABASE AlquimiaLiteraria;
 
 USE AlquimiaLiteraria;
 
+--No dependen de ninguno se ejecutan primero
 CREATE TABLE Tipo_Identidad (
     id_tipo_identidad INT IDENTITY(1,1) PRIMARY KEY,
     nombre_tipo VARCHAR(50) NOT NULL
@@ -12,6 +13,7 @@ CREATE TABLE Categoria (
     nombre_categoria VARCHAR(100) NOT NULL
 );
 
+--Tablas con dependencias
 CREATE TABLE Clientes (
     id_cliente INT IDENTITY(1,1) PRIMARY KEY,
     nombre VARCHAR(100) NOT NULL,
@@ -28,6 +30,7 @@ CREATE TABLE Libros (
     id_categoria INT NOT NULL,
     FOREIGN KEY (id_categoria) REFERENCES Categoria(id_categoria)
 );
+--Tablas que dependen de clientes y libros
 
 CREATE TABLE Compras (
     id_compra INT IDENTITY(1,1) PRIMARY KEY,
@@ -56,18 +59,36 @@ CREATE TABLE Referencias_Personales (
     FOREIGN KEY (id_cliente) REFERENCES Clientes(id_cliente)
 );
 
-
---===============CAMBIOS JOSUE=========---
- ---=====LIBROS=====---
-
---=== Ajustar tabla Libros====---
+--Alterar las Tablas Primero: agregando nuevas columnas y restricciones
 
 ALTER TABLE Libros
 ADD precio INT NOT NULL CHECK (precio > 0),
     cantidad INT,
     estado_libro VARCHAR(30);
 
---===== Insertar categorias===---
+ALTER TABLE Clientes
+ADD CONSTRAINT UQ_Clientes_numero_documento UNIQUE (numero_documento);
+
+ALTER TABLE Compras
+ADD CONSTRAINT CK_fecha_compra CHECK(fecha_compra <= GETDATE());
+
+ALTER TABLE Compras
+ADD CONSTRAINT UQ_Cliente_libro_fecha UNIQUE(id_cliente,id_libro,fecha_compra);
+
+ALTER TABLE Compras
+ADD metodo_pago VARCHAR(20) DEFAULT 'Efectivo';
+
+ALTER TABLE Prestamos
+ADD CONSTRAINT CK_fecha_prestamo CHECK(fecha_prestamo <= GETDATE());
+
+ALTER TABLE Prestamos
+ADD CONSTRAINT CK_fecha_devolucion CHECK(fecha_devolucion <= GETDATE());
+
+ALTER TABLE Prestamos
+ADD metodo_pago VARCHAR(20) DEFAULT 'Efectivo';
+
+--INSERT DE LOS DATOS EN ORDEN LOGICO--
+--1.--
 INSERT INTO Categoria (nombre_categoria)
 VALUES
 ('Fantas a'),
@@ -85,9 +106,10 @@ VALUES
 ('Distop a'),
 ('Drama');
 
+--2.--
 INSERT INTO Libros (titulo, autor, precio, cantidad, estado_libro, id_categoria)
 VALUES
-('El Se or de los Anillos', 'J.R.R. Tolkien', 80000, 5, 'Nuevo', 1),
+('El Senor de los Anillos', 'J.R.R. Tolkien', 80000, 5, 'Nuevo', 1),
 ('Harry Potter y el Prisionero de Azkaban', 'J.K. Rowling', 50000, 7, 'Nuevo', 1),
 ('Clean Code', 'Robert C. Martin', 90000, 10, 'Nuevo', 2),
 ('Eloquent JavaScript', 'Marijn Haverbeke', 60000, 8, 'Usado', 2),
@@ -116,101 +138,45 @@ VALUES
 ('Cien a os de soledad', 'Gabriel Garc a M rquez', 85000, 6, 'Nuevo', 14),
 ('La Casa de los Esp ritus', 'Isabel Allende', 70000, 4, 'Usado', 14);
 
-SELECT L.titulo, L.autor, L.precio, L.estado_libro, C.nombre_categoria
-FROM Libros L
-INNER JOIN Categoria C
-    ON L.id_categoria = C.id_categoria;
+--3.--
 
---Sebastian-herrera
-ALTER TABLE Clientes
-ADD CONSTRAINT UQ_Clientes_numero_documento UNIQUE (numero_documento);
+INSERT INTO Tipo_Identidad (nombre_tipo)
+VALUES ('Cédula de Ciudadanía'), ('Tarjeta de Identidad'), ('Pasaporte');
 
-INSERT INTO Clientes (id_cliente, nombre, apellido, numero_documento)
+--4.--
+INSERT INTO Clientes (nombre, apellido, id_tipo_identidad, numero_documento)
 VALUES
-(1, 'Juan', 'PÃ©rez', '1001'),
-(2, 'MarÃ­a', 'LÃ³pez', '1002'),
-(3, 'Carlos', 'RamÃ­rez', '1003'),
-(4, 'Ana', 'GonzÃ¡lez', '1004'),
-(5, 'Pedro', 'MartÃ­nez', '1005'),
-(6, 'Laura', 'HernÃ¡ndez', '1006'),
-(7, 'JosÃ©', 'Santos', '1007'),
-(8, 'Elena', 'Castillo', '1008'),
-(9, 'Miguel', 'Torres', '1009'),
-(10, 'SofÃ­a', 'DÃ­az', '1010');
+('Juan', 'Pérez', 1, '1001'),
+('María', 'López', 2, '1002'),
+('Carlos', 'Ramírez', 1, '1003'),
+('Ana', 'González', 3, '1004'),
+('Pedro', 'Martínez', 1, '1005'),
+('Laura', 'Hernández', 2, '1006'),
+('José', 'Santos', 3, '1007'),
+('Elena', 'Castillo', 1, '1008'),
+('Miguel', 'Torres', 2, '1009'),
+('Sofía', 'Díaz', 3, '1010');
 
-UPDATE Clientes
-SET apellido = 'RodrÃ­guez'
-WHERE id_cliente = 1;
+--5.--
 
-SELECT 
-    c.id_cliente,
-    c.nombre + ' ' + c.apellido AS cliente,
-    l.titulo AS libro,
-    comp.fecha_compra
-FROM Clientes c
-INNER JOIN Compras comp 
-    ON c.id_cliente = comp.id_cliente
-INNER JOIN Libros l 
-    ON comp.id_libro = l.id_libro;
---=======
+INSERT INTO Compras (id_cliente, id_libro, fecha_compra)
+VALUES
+(1, 1, '2025-08-01'),
+(2, 3, '2025-08-05'),
+(1, 2, '2025-08-10'),
+(3, 4, '2025-08-12'),
+(4, 5, '2025-08-15'),
+(2, 1, '2025-08-20'),
+(5, 6, '2025-08-22'),
+(3, 7, '2025-08-25'),
+(1, 8, '2025-08-28'),
+(4, 9, '2025-09-01');
 
---==========CAMBIOS SANTIAGO SANCHEZ ROJAS==============-----
---==========COMPRAS Y PRESTAMOS=========================-----
-ALTER TABLE Compras
-ADD CONSTRAINT CK_fecha_compra CHECK(fecha_compra <= GETDATE());
-
-ALTER TABLE Compras
-ADD CONSTRAINT UQ_Cliente_libro_fecha UNIQUE(id_cliente,id_libro,fecha_compra);
-
---Agrego los datos--
-INSERT INTO Compras (id_compra, id_cliente, id_libro, fecha_compra) VALUES
-(1, 1, 1, '2025-08-01'),
-(2, 2, 3, '2025-08-05'),
-(3, 1, 2, '2025-08-10'),
-(4, 3, 4, '2025-08-12'),
-(5, 4, 5, '2025-08-15'),
-(6, 2, 1, '2025-08-20'),
-(7, 5, 6, '2025-08-22'),
-(8, 3, 7, '2025-08-25'),
-(9, 1, 8, '2025-08-28'),
-(10, 4, 9, '2025-09-01');
-
---ALTER TABLES--
-ALTER TABLE Compras
-ADD metodo_pago VARCHAR(20) DEFAULT 'Efectivo'
-
-UPDATE Compras
-SET id_libro = 5
-WHERE id_compra = 2;
-
---INNER JOIN--
-SELECT c.nombre, c.apellido, l.titulo, comp.fecha_compra
-FROM Clientes c
-INNER JOIN Compras comp ON c.id_cliente = comp.id_cliente
-INNER JOIN Libros l ON comp.id_libro = l.id_libro;
-
---PRESTAMOS--
-ALTER TABLE Prestamos
-ADD CONSTRAINT CK_fecha_prestamo CHECK(fecha_prestamo <= GETDATE());
-
-ALTER TABLE Prestamos
-ADD CONSTRAINT CK_fecha_devolucion CHECK(fecha_devolucion <= GETDATE());
-
-INSERT INTO Prestamos (id_prestamos, id_cliente, id_libro, fecha_prestamo, fecha_devolucion) VALUES
-(1, 1, 3, '2025-08-01', '2025-08-15'),
-(2, 2, 5, '2025-08-05', '2025-08-19'),
-(3, 3, 1, '2025-08-08', '2025-08-22'),
-(4, 1, 2, '2025-08-10', '2025-08-24'),
-(5, 4, 4, '2025-08-12', '2025-08-26'),
-(6, 5, 6, '2025-08-15', '2025-08-29'),
-(7, 2, 7, '2025-08-18', '2025-09-01'),
-(8, 3, 8, '2025-08-20', '2025-09-03'),
-(9, 4, 9, '2025-08-22', '2025-09-05'),
-(10, 5, 10, '2025-08-25', '2025-09-08');
-
-ALTER TABLE Prestamos
-ADD metodo_pago VARCHAR(20) DEFAULT 'Efectivo'
-
-SELECT c.nombre, c.apellido, p.fecha_prestamo, p.fecha_devolucion
-FROM Clientes c
-INNER JOIN Prestamos p ON c.id_cliente = p.id_cliente;
+--6.--
+INSERT INTO Prestamos (id_cliente, id_libro, fecha_prestamo, fecha_devolucion, metodo_pago)
+VALUES
+(1, 3, '2025-07-10', '2025-07-20', 'Efectivo'),
+(2, 5, '2025-07-12', '2025-07-25', 'Tarjeta'),
+(3, 8, '2025-07-15', '2025-07-30', 'Transferencia'),
+(4, 10, '2025-07-18', '2025-07-28', 'Efectivo'),
+(5, 2, '2025-07-20', '2025-07-31', 'Tarjeta');

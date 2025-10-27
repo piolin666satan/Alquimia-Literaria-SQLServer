@@ -1,0 +1,3 @@
+•	Cumplir con todos los requisitos de las entregas anteriores. Script con la creación de la base de datos, constraint, update, delete, alter table, insert de los datos, inner join. 
+•	Tener un query con recuperación de datos y columnas calculadas.
+•	Script de la base de datos implementando procedimientos almacenado. Uno por integrante.
