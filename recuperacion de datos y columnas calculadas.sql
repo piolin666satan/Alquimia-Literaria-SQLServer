@@ -33,3 +33,14 @@ SELECT
 FROM Prestamos P
 JOIN Clientes CL ON P.id_cliente = CL.id_cliente
 JOIN Libros L ON P.id_libro = L.id_libro;
+
+--===modeficaciones josue 
+==--
+SELECT L.titulo, L.autor, L.precio, L.cantidad, L.estado_libro, L.id_categoria
+FROM Libros L
+INNER JOIN Categoria C
+    ON L.id_categoria = C.id_categoria;
+--=Informacion de la tabla=---
+SELECT COLUMN_NAME
+FROM INFORMATION_SCHEMA.COLUMNS
+WHERE TABLE_NAME = 'Libros'
